@@ -98,7 +98,8 @@ public class Gun : MonoBehaviour
         Rigidbody2D bulletInstance = Instantiate(rocket, transform.position, transform.rotation) as Rigidbody2D;
         if (transform.root.GetComponent<PlayerControl>().facingRight)
             bulletInstance.velocity = transform.right.normalized * speed;
-        else bulletInstance.velocity = new Vector2(-transform.right.x, transform.right.y).normalized * speed;
+        // else bulletInstance.velocity = new Vector2(-transform.right.x, transform.right.y).normalized * speed;
+        else bulletInstance.velocity = new Vector2(-transform.right.x, -transform.right.y).normalized * speed;
         bulletInstance.GetComponentInChildren<Rocket>().ignoreTag = transform.root.tag;
         targetSpeed = speed = 0;
         attackBar.localScale = Vector3.up * 2 + Vector3.forward;

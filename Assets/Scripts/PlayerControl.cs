@@ -26,17 +26,22 @@ public class PlayerControl : MonoBehaviour
 
     private List<KeyCode> acciones = new List<KeyCode>();
     private Transform pivot;
+    public GameObject myPivot;
 
     [HideInInspector]
     public bool hasTurn = false;
-    protected float tilt;
+    public float tilt;
+
+    float myCurrentSpeed;
 
     void Awake()
 	{
 		// Setting up references.
 		groundCheck = transform.Find("groundCheck");
 		anim = GetComponent<Animator>();
-        pivot = transform.Find("Pivot");
+        //pivot = transform.Find("pivot");
+        pivot = myPivot.GetComponent<Transform>();
+
     }
 
 
@@ -61,12 +66,14 @@ public class PlayerControl : MonoBehaviour
             if (acciones.Contains(KeyCode.LeftArrow))
             {
                 Debug.Log(" Left Keycode: ");
-                h = anim.GetFloat("Speed") - 0.1f;
+                //h = anim.GetFloat("Speed") - 0.1f;
+                h = myCurrentSpeed - 0.1f;
             }
             if (acciones.Contains(KeyCode.RightArrow))
             {
                 Debug.Log(" Right Keycode: ");
-                h = anim.GetFloat("Speed") + 0.1f;
+                //h = anim.GetFloat("Speed") + 0.1f;
+                h = myCurrentSpeed + 0.1f;
             }
         }
         if (acciones.Contains(KeyCode.UpArrow))
@@ -78,10 +85,13 @@ public class PlayerControl : MonoBehaviour
             tilt -= 1.0f;
         }
         tilt = Mathf.Clamp(tilt, 0, 75);
-        pivot.rotation = Quaternion.Euler(0, 0, tilt);
+        //pivot.rotation = Quaternion.Euler(0, 0, tilt);
+        pivot.rotation = Quaternion.Euler(0, 0, facingRight?tilt:-tilt);
+
 
         // The Speed animator parameter is set to the absolute value of the horizontal input.
         anim.SetFloat("Speed", Mathf.Abs(h));
+        myCurrentSpeed = h;
 
 		// If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
 		if(h * GetComponent<Rigidbody2D>().velocity.x < maxSpeed)
@@ -119,9 +129,9 @@ public class PlayerControl : MonoBehaviour
 			jump = false;
 		}
 
-        if (!hasTurn)
+       /* if (!hasTurn)
             return;
-
+            */
     }
 
 
@@ -178,45 +188,56 @@ public class PlayerControl : MonoBehaviour
     {
         if (!acciones.Contains(code)) acciones.Add(code);
     }
+
     private void ActualizarAccionUp(KeyCode code)
     {
         if (acciones.Contains(code)) acciones.Remove(code);
     }
+
     public void MueveDerechaDown()
     {
         ActualizarAccionDown(KeyCode.RightArrow);
     }
+
     public void MueveIzquierdaDown()
     {
         ActualizarAccionDown(KeyCode.LeftArrow);
     }
+
     public void RotaIzquierdaDown()
     {
         ActualizarAccionDown(KeyCode.UpArrow);
     }
+
     public void RotaDerechaDown()
     {
         ActualizarAccionDown(KeyCode.DownArrow);
+
     }
+
     public void MueveDerechaUp()
     {
         ActualizarAccionUp(KeyCode.RightArrow);
     }
+
     public void MueveIzquierdaUp()
     {
         ActualizarAccionUp(KeyCode.LeftArrow);
     }
-    public void RotaDerechaUp()
-    {
-        ActualizarAccionUp(KeyCode.DownArrow);
-    }
+
     public void RotaIzquierdaUp()
     {
         ActualizarAccionUp(KeyCode.UpArrow);
     }
 
+    public void RotaDerechaUp()
+    {
+        ActualizarAccionUp(KeyCode.DownArrow);
+    }
+
     public void Jump()
     {
-        jump = true;
+        if (grounded)
+            jump = true;
     }
 }
